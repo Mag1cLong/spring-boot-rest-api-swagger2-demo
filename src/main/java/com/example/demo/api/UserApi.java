@@ -1,5 +1,6 @@
 package com.example.demo.api;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.vo.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,51 +34,73 @@ public class UserApi {
 
     @ApiOperation("用户列表")
     @GetMapping
-    public List<User> userList(
+    public List<User> getUserList(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int perPage
     ) {
-        return userList;
+        int from = (page - 1) * perPage > userList.size() ? userList.size() : (page - 1) * perPage;
+        int to = (page * perPage) > userList.size() ? userList.size() : page * perPage;
+        return userList.subList(from, to);
     }
 
     @ApiOperation("用户详情")
     @GetMapping("{userId}")
-    public User user(
+    public User getUser(
             @PathVariable @ApiParam(value = "用户id", required = true) String userId
-    ) {
-        return userList.get(0);
+    ) throws Exception {
+        User user = new User();
+        user.setUserId(userId);
+        int index = userList.indexOf(user);
+        if (index < 0) throw new ResourceNotFoundException("用户不存在");
+        return userList.get(index);
     }
 
 
     @ApiOperation("新增用户")
     @PostMapping
-    public User save(
+    public User addUser(
             @RequestParam @ApiParam(value = "用户名", required = true) String userName,
             @RequestParam @ApiParam(value = "密码", required = true) String password,
             @RequestParam(required = false) @ApiParam(value = "邮箱") String email
     ) {
-        if(password.length()<6)throw new IllegalArgumentException("密码不能少于6位");
+        if (password.length() < 6) throw new IllegalArgumentException("密码不能少于6位");
         User user = new User();
-        user.setUserId("3");
+        Integer size = userList.size() + 1;
+        user.setUserId(size.toString());
         user.setUserName(userName);
         user.setPassword(password);
         user.setEmail(email);
+        userList.add(user);
         return user;
     }
-//
-//    @ApiOperation("更新用户")
-//    @ApiImplicitParam(name = "user", value = "单个用户信息", dataType = "User")
-//    @PutMapping("update")
-//    public boolean update(User user) {
-//        return userList.remove(user) && userList.add(user);
-//    }
-//
-//    @ApiOperation("批量删除")
-//    @ApiImplicitParam(name = "users", value = "N个用户信息", dataType = "List<User>")
-//    @DeleteMapping("delete")
-//    public boolean delete(@RequestBody List<User> users) {
-//        return userList.removeAll(users);
-//    }
+
+    @ApiOperation("修改用户")
+    @PutMapping("{userId}")
+    public User updateUser(
+            @PathVariable @ApiParam(value = "用户id", required = true) String userId,
+            @RequestParam(required = false) @ApiParam(value = "用户名") String userName,
+            @RequestParam(required = false) @ApiParam(value = "密码") String password,
+            @RequestParam(required = false) @ApiParam(value = "邮箱") String email
+    ) {
+        User user = new User();
+        user.setUserId(userId);
+        user.setUserName(userName);
+        user.setPassword(password);
+        user.setEmail(email);
+        userList.remove(user);
+        userList.add(user);
+        return user;
+    }
+
+    @ApiOperation("删除用户")
+    @DeleteMapping("{userId}")
+    public void deleteUser(
+            @PathVariable @ApiParam(value = "用户id", required = true) String userId
+    ) {
+        User user = new User();
+        user.setUserId(userId);
+        userList.remove(user);
+    }
 
 
 }
