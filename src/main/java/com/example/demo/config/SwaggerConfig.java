@@ -18,16 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * swagger配置类
+ * http://localhost:8080/swagger-ui.html
  * Created by jcl on 2018/12/5
  */
-@Configuration //标记配置类
-@EnableSwagger2 //开启在线接口文档
+@Configuration
+@EnableSwagger2
 public class SwaggerConfig {
+
     /**
-     * 添加摘要信息(Docket)
+     * 配置api文档
      */
     @Bean
-    public Docket controllerApi() {
+    public Docket configApiDocs() {
         List<ResponseMessage> responseMessageList = new ArrayList<>();
         responseMessageList.add(new ResponseMessageBuilder().code(400).message("错误请求").build());
         responseMessageList.add(new ResponseMessageBuilder().code(401).message("未授权").build());
