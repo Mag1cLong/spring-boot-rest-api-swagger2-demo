@@ -2,9 +2,9 @@ package com.example.demo.api;
 
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.vo.User;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,6 +32,8 @@ public class UserApi {
         userList.add(user);
     }
 
+
+
     @ApiOperation("用户列表")
     @GetMapping
     public List<User> getUserList(
@@ -57,6 +59,9 @@ public class UserApi {
 
 
     @ApiOperation("新增用户")
+    @ApiResponses({
+            @ApiResponse(code = 400, message = "密码不能少于6位"),
+    })
     @PostMapping
     public User addUser(
             @RequestParam @ApiParam(value = "用户名", required = true) String userName,

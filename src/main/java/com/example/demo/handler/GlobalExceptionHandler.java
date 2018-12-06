@@ -1,7 +1,10 @@
 package com.example.demo.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.ResourceNotFoundException;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,7 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     /**
-     * 参数非法返回400
+     * 400
      *
      * @param e
      * @return
@@ -26,7 +29,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 资源找不到返回404
+     * 403
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity handleBusinessException(Exception e) {
+        return buildResponse(e.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+
+    /**
+     * 404
      *
      * @param e
      * @return
