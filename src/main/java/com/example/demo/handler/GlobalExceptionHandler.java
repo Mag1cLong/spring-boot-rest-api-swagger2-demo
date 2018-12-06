@@ -14,23 +14,40 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * 参数非法返回400
+     *
+     * @param e
+     * @return
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity handleIllegalArgumentException(Exception e) {
-        JSONObject resp = new JSONObject();
-        resp.put("status", HttpStatus.BAD_REQUEST.value());
-        resp.put("error", HttpStatus.BAD_REQUEST);
-        resp.put("message", e.getMessage());
-        return new ResponseEntity(resp, HttpStatus.BAD_REQUEST);
+        return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * 资源找不到返回404
+     *
+     * @param e
+     * @return
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity handleResourceNotFoundException(Exception e) {
-        JSONObject resp = new JSONObject();
-        resp.put("status", HttpStatus.NOT_FOUND.value());
-        resp.put("error", HttpStatus.NOT_FOUND);
-        resp.put("message", e.getMessage());
-        return new ResponseEntity(resp, HttpStatus.NOT_FOUND);
+        return buildResponse(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-
+    /**
+     * 构建响应实体
+     *
+     * @param msg
+     * @param status
+     * @return
+     */
+    private ResponseEntity buildResponse(String msg, HttpStatus status) {
+        JSONObject body = new JSONObject();
+        body.put("status", status.value());
+        body.put("error", status);
+        body.put("message", msg);
+        return new ResponseEntity(body, status);
+    }
 }
