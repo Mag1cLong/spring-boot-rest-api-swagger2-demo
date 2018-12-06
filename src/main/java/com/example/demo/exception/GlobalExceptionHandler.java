@@ -1,10 +1,6 @@
-package com.example.demo.handler;
+package com.example.demo.exception;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo.exception.BusinessException;
-import com.example.demo.exception.ResourceNotFoundException;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
