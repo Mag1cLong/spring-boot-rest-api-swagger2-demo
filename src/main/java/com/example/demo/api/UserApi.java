@@ -1,5 +1,6 @@
 package com.example.demo.api;
 
+import com.example.demo.config.GlobalConfig;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.vo.User;
 import io.swagger.annotations.*;
@@ -7,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping("users")
 public class UserApi {
+    @Resource
+    private HttpServletResponse response;
     private final static List<User> userList = new ArrayList<>();
 
     {
@@ -42,6 +47,7 @@ public class UserApi {
     ) {
         int from = (page - 1) * perPage > userList.size() ? userList.size() : (page - 1) * perPage;
         int to = (page * perPage) > userList.size() ? userList.size() : page * perPage;
+        response.addHeader(GlobalConfig.HEADERS_X_TOTAL_COUNT,String.valueOf(userList.size()));
         return userList.subList(from, to);
     }
 
